@@ -1,0 +1,74 @@
+/* 공통 레이아웃 */
+.container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fafafa;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* 제목 */
+h2, h3 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+/* 셀렉트 및 인풋 */
+select,
+input[type="text"] {
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+    width: 100%;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+/* 버튼 */
+button {
+    padding: 0.5rem 1rem;
+    margin-top: 0.5rem;
+    margin-right: 0.5rem;
+    background-color: #2D4A69;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #1F2E3D;}
+
+button:disabled {
+    background-color: #B0C4DE;
+    cursor: not-allowed;
+}
+
+/* 리스트 */
+ul {
+    list-style-type: disc;
+    margin-left: 1.5rem;
+    margin-top: 1rem;
+    color: #444;
+}
+
+li {
+    margin-bottom: 0.5rem;
+}
+
+/* 선택된 버튼 강조 */
+button.selected {
+    background-color: #282c34;
+}
+
+/* 안내 문구 */
+p {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
