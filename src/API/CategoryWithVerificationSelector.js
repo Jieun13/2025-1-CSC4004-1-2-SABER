@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { fetchCategories, fetchDefaultVerifications, setCategory } from '../api';
 import './CommonStyles.css';
 
@@ -6,10 +7,27 @@ export default function CategoryWithVerificationSelector({ onCategorySelected })
     const [categories, setCategories] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
     const [verifications, setVerifications] = useState([]);
+    const [loadingToken, setLoadingToken] = useState(true);
+
+    // 1. 페이지 접속 시 buyerToken 발급
+    useEffect(() => {
+        async function issueBuyerToken() {
+            try {
+                await axios.post('http://localhost:8080/api/token', null, { withCredentials: true });
+                setLoadingToken(false);
+            } catch (error) {
+                console.error('토큰 발급 실패', error);
+                setLoadingToken(false);
+            }
+        }
+        issueBuyerToken();
+    }, []);
 
     useEffect(() => {
-        fetchCategories().then(res => setCategories(res.data));
-    }, []);
+        if (!loadingToken) {
+            fetchCategories().then(res => setCategories(res.data));
+        }
+    }, [loadingToken]);
 
     useEffect(() => {
         if (selectedId) {
@@ -21,10 +39,19 @@ export default function CategoryWithVerificationSelector({ onCategorySelected })
 
     const handleSelect = async () => {
         if (!selectedId) return;
-        const res = await setCategory(selectedId);
-        const verificationId = res.data; // 백엔드에서 인증 링크 ID를 반환한다고 가정
-        onCategorySelected(verificationId);
+
+        try {
+            const res = await setCategory(selectedId);
+            const verificationId = res.data; // 인증 링크 ID 반환
+            onCategorySelected(verificationId);
+        } catch (error) {
+            console.error('카테고리 설정 실패', error);
+        }
     };
+
+    if (loadingToken) {
+        return <div>로딩 중...</div>;
+    }
 
     return (
         <div className="container">

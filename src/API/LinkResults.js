@@ -8,14 +8,29 @@ export default function LinkResult({ verificationId }) {
     const [status, setStatus] = useState(null);
 
     const handleCreateLink = async () => {
-        const res = await createLink(verificationId);
-        setLink(res.data.link);
-        setStatus(res.data.status);
+        if (isDisabled) return;
+        try {
+            const res = await createLink(verificationId);
+            // API 응답에서 link와 status가 각각 res.data.link, res.data.status에 있다고 가정
+            setLink(res.data.link);
+            setStatus(res.data.status);
+        } catch (error) {
+            console.error('링크 생성 실패', error);
+            alert('인증 링크 생성에 실패했습니다.');
+        }
     };
 
     const handleCheckStatus = async () => {
-        const res = await getVerificationStatus(verificationId);
-        alert(`현재 상태: ${res.data.status}`);
+        if (isDisabled) return;
+        try {
+            const res = await getVerificationStatus(verificationId);
+            // 상태가 res.data.status에 있다고 가정
+            setStatus(res.data.status);
+            alert(`현재 상태: ${res.data.status}`);
+        } catch (error) {
+            console.error('상태 조회 실패', error);
+            alert('인증 상태 조회에 실패했습니다.');
+        }
     };
 
     return (

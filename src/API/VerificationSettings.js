@@ -31,11 +31,19 @@ export default function VerificationSettings({ verificationId }) {
 
     const handleSubmit = async () => {
         const timeLimit = selectedTime === '기타' ? null : selectedTime.replace('분', '');
+
+        const customRequests = requirements.join(', '); // 리스트 → 문자열 변환
+
+        const verificationMethod = selectedMethod === '사진 촬영' ? 1
+            : selectedMethod === '동영상 촬영' ? 2
+                : null;
+
         await setVerificationOptions(verificationId, {
-            timeLimit,
-            method: selectedMethod,
-            extraRequirements: requirements,
+            limitedMinutes: timeLimit ? parseInt(timeLimit, 10) : null,
+            customRequests,
+            VerificationMethods: verificationMethod !== null ? [verificationMethod] : [],
         });
+
         alert('상세 설정 완료');
     };
 
@@ -89,6 +97,7 @@ export default function VerificationSettings({ verificationId }) {
                     <li>동영상 촬영</li>
                 )}
             </ul>
+            <button disabled={isDisabled} onClick={handleSubmit} disabled={isDisabled}>완료</button>
         </div>
     );
 }
