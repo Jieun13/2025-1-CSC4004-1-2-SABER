@@ -30,7 +30,7 @@ public class VerificationService {
     public Verification submitResult(Long verificationId, VerificationSubmitRequest request) {
         Verification verification = verificationRepository.findById(verificationId).orElseThrow(() -> new EntityNotFoundException("해당 인증이 존재하지 않습니다."));
 
-        verification.setVideoUrl(request.getFileUrl());
+        verification.setImageUrl(request.getFileUrl());
         verification.setComment(request.getComment());
         verification.setResult(VerificationResult.SUBMITTED);
         verification.setSubmittedAt(LocalDateTime.now());
@@ -54,5 +54,9 @@ public class VerificationService {
             link.setStatus(VerificationLinkStatus.COMPLETED);
             verificationLinkRepository.save(link);
         }
+    }
+
+    public Verification findById(Long id) {
+        return verificationRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Verification not found"));
     }
 }

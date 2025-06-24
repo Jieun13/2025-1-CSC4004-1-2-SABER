@@ -36,4 +36,15 @@ public class VerificationRestController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @GetMapping("/verifications/{id}/photo")
+    @Operation(summary = "인증 사진 조회", description = "인증에 저장된 사진 URL을 반환합니다.")
+    public ResponseEntity<String> getVerificationPhoto(@PathVariable Long id) {
+        Verification verification = verificationService.findById(id);
+        if (verification == null) {
+            return ResponseEntity.notFound().build();
+        }
+        String photoUrl = verification.getImageUrl(); // DB에 저장된 URL
+        return ResponseEntity.ok(photoUrl);
+    }
 }

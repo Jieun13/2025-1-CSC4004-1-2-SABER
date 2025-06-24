@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import GlobalStyle from './styles/GlobalStyle'; // GlobalStyle 임포트
 import { TimerProvider } from './contexts/TimerContext'; // TimerProvider 임포트
 
@@ -16,7 +16,6 @@ import SellerStartScreen from './pages/SellerStartScreen';
 import SellerUsageGuideScreen from './pages/SellerUsageGuideScreen';
 import SellerPermissionScreen from './pages/SellerPermissionScreen';
 import SellerPermissionDeniedScreen from './pages/SellerPermissionDeniedScreen';
-import SellerVerificationStartScreen from './pages/SellerVerificationStartScreen';
 import SellerCameraScreen from './pages/SellerCameraScreen';
 import SellerVerificationCompleteScreen from './pages/SellerVerificationCompleteScreen';
 import SellerVerificationFailedScreen from './pages/SellerVerificationFailedScreen'; // 인증 실패 화면 추가
@@ -29,15 +28,35 @@ import BuyerVerificationCompleteScreen from './pages/BuyerVerificationCompleteSc
 import ResultScreen from './pages/ResultScreen'
 import CaptureWarningScreen from './pages/CaptureWarningScreen';
 import EndScreen from './pages/EndScreen';
+import S3Uploader from "./pages/S3Uploader";
+import VerificationCamera from "./pages/VerificationCamera";
+import SellerVerificationStart from "./pages/SellerVerificationStart";
+import SellerVerificationList from "./pages/SellerVerificationStart";
 
 function App() {
   const [verificationId, setVerificationId] = useState(null);
+  const location = useLocation();
+  const baseURL = process.env.REACT_APP_API_BASE_URL;
 
   useEffect(() => {
-      fetch('http://localhost:8080/api/test')
+      fetch(`${baseURL}/api/test`)
           .then(response => response.text())
           .catch(error => console.error("Error fetching data: ", error));
   }, []);
+
+  useEffect(() => {
+    const handleContextMenu = (e) => {
+      e.preventDefault();
+    };
+
+    if (location.pathname.startsWith('/seller')) {
+      document.addEventListener('contextmenu', handleContextMenu);
+    }
+
+    return () => {
+      document.removeEventListener('contextmenu', handleContextMenu);
+    };
+  }, [location.pathname]);
 
   return (
     <div className="App">
@@ -57,6 +76,7 @@ function App() {
           <Route path="/seller/permission" element={<SellerPermissionScreen />} />
           <Route path="/seller/denied" element={<SellerPermissionDeniedScreen />} />
           <Route path="/seller/camera" element={<SellerCameraScreen />} />
+          <Route path="/seller/verification-list" element={<SellerVerificationList />} />
           <Route path="/seller/verification-complete" element={<SellerVerificationCompleteScreen />} />
           <Route path="/seller/verification-failed" element={<SellerVerificationFailedScreen />} />
           <Route path="/seller/submit" element={<SellerVerificationSubmitScreen />} />
@@ -67,9 +87,23 @@ function App() {
           <Route path="/result" element={<ResultScreen />} />
           <Route path="/capture-warning" element={<CaptureWarningScreen />} />
           <Route path="/end" element={<EndScreen />} />
+
+          <Route path="/upload" element={<S3Uploader  />} />
+          <Route path="/seller/verification-start" element={<SellerVerificationStart />} />
+          <Route path="/verifications/:id/camera" element={<VerificationCamera />} />
+          <Route path="*" element={<div>Not Found</div>} />
+
         </Routes>
       </TimerProvider>
     </div>
+  );
+}
+
+function AppWithRouter() {
+  return (
+    <Router>
+      <App />
+    </Router>
   );
 }
 

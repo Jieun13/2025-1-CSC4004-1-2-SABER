@@ -8,12 +8,13 @@ import logoImage from '../assets/logo.png';
 export default function StartScreen() {
   const navigate = useNavigate();
   const [loadingToken, setLoadingToken] = useState(true);
+    const baseURL = process.env.REACT_APP_API_BASE_URL;
 
   // 1. 페이지 접속 시 buyerToken 발급
   useEffect(() => {
     async function issueBuyerToken() {
           try {
-            await axios.post('http://localhost:8080/api/token', null, { withCredentials: true });
+            await axios.post(`${baseURL}/api/token`, null, { withCredentials: true });
             setLoadingToken(false);
           } catch (error) {
               console.error('토큰 발급 실패', error);
@@ -44,8 +45,7 @@ export default function StartScreen() {
       <p className="subtitle">서비스 설명, 소개</p>
       <p className="subtitle">실시간으로 거래 물품을</p>
       <p className="subtitle">인증할 수 있는 서비스</p>
-      <button className="button" onClick={ goToNoticeScreen() }>안전하게 인증 후 구매하기</button>
-      <div className="image-placeholder">이미지 자리</div>
+      <button className="button" onClick={ goToNoticeScreen }>안전하게 인증 후 구매하기</button>
     </div>
   );
 }

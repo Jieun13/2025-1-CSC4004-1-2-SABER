@@ -1,15 +1,30 @@
-import React, { useState } from 'react';
+import React, {  useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../css/Sellers.css';
 import logoImage from '../assets/logo.png';
+import { useTimer } from '../contexts/TimerContext';
 
 function SellerPermissionScreen() {
     const navigate = useNavigate();
     const [permissions, setPermissions] = useState({ push: null, camera: null });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const { timeLeft, isTimerRunning, resetTimer} = useTimer();
+    const baseURL = process.env.REACT_APP_API_BASE_URL;
 
+    useEffect(() => {
+        if (localStorage.getItem('sellerTimerLeft') === null || parseInt(localStorage.getItem('sellerTimerLeft')) <= 0) {
+            resetTimer();
+        }
+    }, [resetTimer]);
+
+    useEffect(() => {
+        if (!isTimerRunning && timeLeft <= 0) {
+            navigate('/seller/verification-failed');
+        }
+    }, [isTimerRunning, timeLeft, navigate]);
+      
     const goToStart = () => {
         navigate('/seller/start');
     };
@@ -31,7 +46,7 @@ function SellerPermissionScreen() {
         setError('');
 
         try {
-            await axios.post(`http://localhost:8080/api/saber/link/${sessionId}/agree`, null, {
+            await axios.post(`${baseURL}/api/saber/link/${sessionId}/agree`, null, {
                 withCredentials: true,
             });
             navigate('/seller/verification-start');
